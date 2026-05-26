@@ -52,20 +52,33 @@ object ConfigLoader {
     fun load(): AppConfig {
         config?.let { return it }
 
-        val appConfig = loadConfig()
-
+        val appConfig = try {
+            loadFromYaml()
+        } catch (e: Exception) {
+            // Fallback to environment variables or defaults
+            loadFromEnvOrDefaults()
+        }
 
         config = appConfig
         return appConfig
     }
 
-    private fun loadConfig(): AppConfig {
+    private fun loadFromYaml(): AppConfig {
+        // Try to load from KTor's config system
+        val config3 = ApplicationConfig("application.yaml")
 
-        val jwtSecret = "default-secret-change-in-production"
-        val jwtExpiration = JwtConfig.DEFAULT_EXPIRATION
-        val mongodbUri = "mongodb://localhost:27017"
-        val host =  "0.0.0.0"
-        val port = 8080
+        val jwtSecret = config3.propertyOrNull("jwt.secret")?.getString()
+            ?: "default-secret-change-in-production"
+        val jwtExpiration = config3.propertyOrNull("jwt.expiration")?.getString()?.toLongOrNull()
+            ?: JwtConfig.DEFAULT_EXPIRATION
+
+        val mongodbUri = config3.propertyOrNull("mongodb.uri")?.getString()
+            ?: "mongodb://localhost:27017"
+
+        val host = config3.propertyOrNull("app.host")?.getString()
+            ?: "0.0.0.0"
+        val port = config3.propertyOrNull("app.port")?.getString()?.toIntOrNull()
+            ?: 8080
 
         return AppConfig(
             jwt = JwtConfig(jwtSecret, jwtExpiration),
@@ -74,6 +87,22 @@ object ConfigLoader {
         )
     }
 
+    private fun loadFromEnvOrDefaults(): AppConfig {
+        // Default configuration using environment variables
+        return AppConfig(
+            jwt = JwtConfig(
+                secret = System.getenv("JWT_SECRET") ?: "default-secret-change-in-production",
+                expiration = System.getenv("JWT_EXPIRATION")?.toLongOrNull() ?: JwtConfig.DEFAULT_EXPIRATION
+            ),
+            mongodb = MongoDBConfig(
+                uri = System.getenv("MONGODB_URI") ?: "mongodb://localhost:27017"
+            ),
+            app = AppServerConfig(
+                host = System.getenv("APP_HOST") ?: "0.0.0.0",
+                port = System.getenv("APP_PORT")?.toIntOrNull() ?: 8080
+            )
+        )
+    }
 
     /**
      * Get the current configuration instance

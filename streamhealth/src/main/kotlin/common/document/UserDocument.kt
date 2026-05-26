@@ -10,7 +10,8 @@ import org.bson.types.ObjectId
  */
 enum class Sexo {
     MASCULINO,
-    FEMENINO
+    FEMENINO,
+    OTRO
 }
 
 /**
@@ -18,7 +19,8 @@ enum class Sexo {
  */
 enum class Rol {
     PACIENTE,
-    DOCTOR
+    DOCTOR,
+    ADMIN
 }
 
 /**
@@ -55,6 +57,10 @@ data class UserDocument(
      */
     fun isPatient(): Boolean = rol == Rol.PACIENTE
 
+    /**
+     * Check if user is an admin
+     */
+    fun isAdmin(): Boolean = rol == Rol.ADMIN
 
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 
