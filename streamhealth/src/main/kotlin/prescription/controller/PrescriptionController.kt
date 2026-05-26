@@ -2,18 +2,14 @@ package com.betha.prescription.controller
 
 import com.betha.auth.service.AuthService
 import com.betha.prescription.dto.CreatePrescriptionRequest
+import com.betha.prescription.dto.PrescriptionResponse
 import com.betha.prescription.dto.UpdatePrescriptionRequest
 import com.betha.prescription.service.PrescriptionService
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Routing
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.put
-import io.ktor.server.routing.route
-import io.ktor.server.routing.openapi.describe
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 /**
  * Prescription controller for managing medical prescriptions
@@ -50,17 +46,6 @@ fun Routing.prescriptionController(
                     message = mapOf("error" to (e.message ?: "Error interno"))
                 )
             }
-        }.describe {
-            summary = "Create prescription"
-            description = "Create a new medical prescription"
-            responses {
-                HttpStatusCode.Created {
-                    description = "Prescription created successfully"
-                }
-                HttpStatusCode.BadRequest {
-                    description = "Invalid input or validation error"
-                }
-            }
         }
 
         /**
@@ -83,17 +68,6 @@ fun Routing.prescriptionController(
                     status = HttpStatusCode.InternalServerError,
                     message = mapOf("error" to (e.message ?: "Error interno"))
                 )
-            }
-        }.describe {
-            summary = "Get patient prescriptions"
-            description = "Retrieve all prescriptions for a specific patient"
-            responses {
-                HttpStatusCode.OK {
-                    description = "List of prescriptions"
-                }
-                HttpStatusCode.BadRequest {
-                    description = "Invalid request parameters"
-                }
             }
         }
 
@@ -124,17 +98,6 @@ fun Routing.prescriptionController(
                     status = HttpStatusCode.InternalServerError,
                     message = mapOf("error" to (e.message ?: "Error interno"))
                 )
-            }
-        }.describe {
-            summary = "Get prescription by ID"
-            description = "Retrieve a specific prescription by its unique ID"
-            responses {
-                HttpStatusCode.OK {
-                    description = "Prescription found"
-                }
-                HttpStatusCode.NotFound {
-                    description = "Prescription not found"
-                }
             }
         }
 
@@ -167,20 +130,6 @@ fun Routing.prescriptionController(
                     message = mapOf("error" to (e.message ?: "Error interno"))
                 )
             }
-        }.describe {
-            summary = "Update prescription"
-            description = "Update an existing prescription"
-            responses {
-                HttpStatusCode.OK {
-                    description = "Prescription updated successfully"
-                }
-                HttpStatusCode.BadRequest {
-                    description = "Invalid input"
-                }
-                HttpStatusCode.NotFound {
-                    description = "Prescription not found"
-                }
-            }
         }
 
         /**
@@ -210,17 +159,6 @@ fun Routing.prescriptionController(
                     status = HttpStatusCode.InternalServerError,
                     message = mapOf("error" to (e.message ?: "Error interno"))
                 )
-            }
-        }.describe {
-            summary = "Delete prescription"
-            description = "Delete a prescription record"
-            responses {
-                HttpStatusCode.NoContent {
-                    description = "Prescription deleted successfully"
-                }
-                HttpStatusCode.NotFound {
-                    description = "Prescription not found"
-                }
             }
         }
     }
