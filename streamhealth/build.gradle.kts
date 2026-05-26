@@ -28,6 +28,7 @@ dependencies {
     implementation(ktorLibs.server.openapi)
     implementation(ktorLibs.server.routingOpenapi)
     implementation(ktorLibs.server.cors)
+    implementation("io.ktor:ktor-server-websockets:3.4.0")
     // Swagger UI
     implementation("io.ktor:ktor-server-swagger:3.0.2")
 
