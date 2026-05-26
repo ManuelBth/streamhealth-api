@@ -26,7 +26,7 @@ class DoctorServiceImpl(
     }
 
     override suspend fun getAllDoctors(): List<DoctorResponse> = withContext(Dispatchers.IO) {
-        log.info("Obteniendo todos los doctores")
+        log.info("Getting all doctors")
 
         val doctors = doctorRepository.findAll()
         doctors.mapNotNull { doctor ->
@@ -45,7 +45,7 @@ class DoctorServiceImpl(
     }
 
     override suspend fun getDoctorByUserId(idNumber: String): DoctorResponse? = withContext(Dispatchers.IO) {
-        log.info("Obteniendo doctor con idNumber: {}", idNumber)
+        log.info("Getting doctor by idNumber: {}", idNumber)
 
         val doctor = doctorRepository.findByUserId(idNumber) ?: return@withContext null
         val user = userRepository.findByIdNumber(doctor.userId) ?: return@withContext null
@@ -61,7 +61,7 @@ class DoctorServiceImpl(
     }
 
     override suspend fun createDoctorProfile(idNumber: String, request: CreateDoctorProfileRequest): DoctorResponse? = withContext(Dispatchers.IO) {
-        log.info("Creando el doctor con idNumber: {}", idNumber)
+        log.info("Creating doctor profile for idNumber: {}", idNumber)
 
         // Find existing user by idNumber
         val user = userRepository.findByIdNumber(idNumber)
@@ -104,7 +104,7 @@ class DoctorServiceImpl(
     }
 
     override suspend fun updateDoctorProfile(idNumber: String, request: UpdateDoctorProfileRequest): DoctorResponse? = withContext(Dispatchers.IO) {
-        log.info("Actualizando información del doctor con idNumber: {}", idNumber)
+        log.info("Updating doctor profile for idNumber: {}", idNumber)
 
         // Find existing user
         val user = userRepository.findByIdNumber(idNumber)
