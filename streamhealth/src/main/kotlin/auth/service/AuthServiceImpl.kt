@@ -27,7 +27,7 @@ class AuthServiceImpl(
     }
 
     override suspend fun login(request: LoginRequest): AuthResponse = withContext(Dispatchers.IO) {
-        log.info("Intento de logueo del usuario: {}", request.id)
+        log.info("Login attempt for user: {}", request.id)
         
         // Find user by idNumber (PRD login uses "id" field)
         val user = authRepository.findByIdNumber(request.id)
@@ -35,15 +35,16 @@ class AuthServiceImpl(
 
         // Verify password
         if (!passwordService.verify(request.password, user.passwordHash)) {
-            log.warn("Error de logueo para el usuario: {} - credenciales inválidas", request.id)
+            log.warn("Login failed for user: {} - invalid credentials", request.id)
             throw IllegalArgumentException("Credenciales inválidas")
         }
 
         // Generate JWT token
         val token = jwtService.generate(user.idNumber, user.rol)
 
-        log.info("Usuario logueado: {}, rol: {}", user.idNumber, user.rol)
+        log.info("Login successful for user: {}, rol: {}", user.idNumber, user.rol)
 
+        // Build response (per PRD: id, nombres, apellidos, rol)
         AuthResponse(
             token = token,
             user = UserInfo(
@@ -85,7 +86,7 @@ class AuthServiceImpl(
         // Save user
         val savedUser = authRepository.save(user)
 
-        log.info("Usuario registrado correctamente: {}, rol: {}", savedUser.idNumber, savedUser.rol)
+        log.info("User registered successfully: {}, rol: {}", savedUser.idNumber, savedUser.rol)
 
         // Generate JWT token
         val token = jwtService.generate(savedUser.idNumber, savedUser.rol)
