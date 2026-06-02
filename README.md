@@ -15,7 +15,7 @@
 
 ---
 
-## 📋 Tabla de Contenidos
+## 📋 Tabla de Contenidos.
 
 - [Descripción](#-descripción)
 - [Stack Tecnológico](#-stack-tecnológico)
